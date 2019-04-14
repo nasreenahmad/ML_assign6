@@ -5,6 +5,8 @@ ds = datastore('house_prices_data_training_data.csv','TreatAsMissing','NA',.....
     'MissingValue',0,'ReadSize',17999);
 T=read(ds);
 x=T(:,4:21);
+
+%%%% PCA
 x=x{:,:};
 x_cor=corr(x);
 x_cov=cov(x);
@@ -80,3 +82,18 @@ end
 [ o bestKvalue ] = min(costVec);
 noClusters = 1:10;
 plot(noClusters, costVec);
+
+%%%%%%%%% Anomaly Detection
+meanData= mean(x);
+stdData= std(x);
+for i=1:m
+    pdf(i)=normpdf(x(5000,i),meanData(i),stdData(i));
+end
+output=prod(pdf);
+
+if(output> 0.99)
+    anomly= 1;
+end
+if (output<0.001)
+    anomly=0;
+end
